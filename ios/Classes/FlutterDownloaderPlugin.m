@@ -455,7 +455,7 @@ static NSMutableDictionary<NSString*, NSMutableDictionary*> *_runningTaskById = 
             status:(int)status
            progress:(int)progress
            filename:(NSString *)filename
-            filesize:(NSString *)filesize
+           filesize:(NSString *)filesize
            savedDir:(NSString *)savedDir
            headers:(NSString *)headers
            resumable:(BOOL)resumable
@@ -466,7 +466,7 @@ static NSMutableDictionary<NSString*, NSMutableDictionary*> *_runningTaskById = 
     
     NSString *query = @"INSERT INTO task (task_id, url, status, progress, file_name, file_size, saved_dir, headers, resumable, show_notification, open_file_from_notification, time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     NSString *sanitizedFileName = [self sanitizeFilename:filename];
-    NSArray *values = @[taskId, url, @(status), @(progress), sanitizedFileName, fileSize, savedDir, headers, @(resumable ? 1:0), @(showNotification ? 1 : 0), @(openFileFromNotification ? 1: 0), @([self currentTimeInMilliseconds])];
+    NSArray *values = @[taskId, url, @(status), @(progress), sanitizedFileName, filesize, savedDir, headers, @(resumable ? 1:0), @(showNotification ? 1 : 0), @(openFileFromNotification ? 1: 0), @([self currentTimeInMilliseconds])];
     
     [_dbManager executeQuery:query withParameters:values];
     
@@ -751,7 +751,7 @@ static NSMutableDictionary<NSString*, NSMutableDictionary*> *_runningTaskById = 
     [_runningTaskById setObject: [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                   urlString, KEY_URL,
                                   fileName, KEY_FILE_NAME,
-                                   fileSize, KEY_FILE_SIZE,
+                                  fileSize, KEY_FILE_SIZE,
                                   savedDir, KEY_SAVED_DIR,
                                   headers, KEY_HEADERS,
                                   showNotification, KEY_SHOW_NOTIFICATION,
@@ -864,7 +864,7 @@ static NSMutableDictionary<NSString*, NSMutableDictionary*> *_runningTaskById = 
             NSString *urlString = taskDict[KEY_URL];
             NSString *savedDir = taskDict[KEY_SAVED_DIR];
             NSString *fileName = taskDict[KEY_FILE_NAME];
-              NSString *fileSize = taskDict[KEY_FILE_SIZE];
+            NSString *fileSize = taskDict[KEY_FILE_SIZE];
             NSString *headers = taskDict[KEY_HEADERS];
 
             NSURLSessionDownloadTask *newTask = [self downloadTaskWithURL:[NSURL URLWithString:urlString] fileName:fileName andSavedDir:savedDir andHeaders:headers];
