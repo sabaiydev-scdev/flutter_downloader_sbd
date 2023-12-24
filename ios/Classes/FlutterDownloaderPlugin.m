@@ -466,8 +466,7 @@ static NSMutableDictionary<NSString*, NSMutableDictionary*> *_runningTaskById = 
     
     NSString *query = @"INSERT INTO task (task_id, url, status, progress, file_name, file_size, saved_dir, headers, resumable, show_notification, open_file_from_notification, time_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     NSString *sanitizedFileName = [self sanitizeFilename:filename];
-    NSString *sanitizedFileSize = [self sanitizeFilename:filesize];
-    NSArray *values = @[taskId, url, @(status), @(progress), sanitizedFileName, sanitizedFileSize, savedDir, headers, @(resumable ? 1:0), @(showNotification ? 1 : 0), @(openFileFromNotification ? 1: 0), @([self currentTimeInMilliseconds])];
+    NSArray *values = @[taskId, url, @(status), @(progress), sanitizedFileName, fileSize, savedDir, headers, @(resumable ? 1:0), @(showNotification ? 1 : 0), @(openFileFromNotification ? 1: 0), @([self currentTimeInMilliseconds])];
     
     [_dbManager executeQuery:query withParameters:values];
     
@@ -505,6 +504,23 @@ static NSMutableDictionary<NSString*, NSMutableDictionary*> *_runningTaskById = 
     
     // Create an array to hold the parameter values
     NSArray *values = @[filename, taskId];
+    
+    [_dbManager executeQuery:query withParameters:values];
+    
+    if (debug) {
+        if (_dbManager.affectedRows != 0) {
+            NSLog(@"Query was executed successfully. Affected rows = %d", _dbManager.affectedRows);
+        } else {
+            NSLog(@"Could not execute the query.");
+        }
+    }
+}
+
+- (void)updateTask:(NSString *)taskId filesize:(NSString *)filesize {
+    NSString *query = @"UPDATE task SET file_size = ? WHERE task_id = ?";
+    
+    // Create an array to hold the parameter values
+    NSArray *values = @[filesize, taskId];
     
     [_dbManager executeQuery:query withParameters:values];
     
